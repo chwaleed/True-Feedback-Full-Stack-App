@@ -50,3 +50,7 @@ const UserSchema = new Schema({
   },
   message: [MessageSchema],
 });
+
+const UserModel = mongoose.models.User || mongoose.model("User", UserSchema);
+
+export default UserModel;
