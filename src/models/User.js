@@ -48,7 +48,7 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  message: [MessageSchema],
+  messages: [MessageSchema],
 });
 
 const UserModel = mongoose.models.User || mongoose.model("User", UserSchema);
