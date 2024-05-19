@@ -8,10 +8,38 @@ export const authOptions = {
   providers: [
     CredentialsProvider({
       id: "credentials",
-      name: "credentials",
+      name: "Credentials",
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        await dbConnect();
+        try {
+          const user = UserModel.findOne({
+            $or: [
+              { email: credentials.identifier },
+              { username: credentials.identifier },
+            ],
+          });
+          if (!user) {
+            throw new Error("No user found with this email");
+          }
+          if (user.isVerified) {
+            throw new Error("User is not verified");
+          }
+          const isPasswordCorrect = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+          if (isPasswordCorrect) {
+            return user;
+          } else {
+            throw new Error("Invalid Password");
+          }
+        } catch (error) {
+          throw new Error(error);
+        }
       },
     }),
   ],
