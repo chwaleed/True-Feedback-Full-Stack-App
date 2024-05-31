@@ -16,20 +16,27 @@ export async function GET(request) {
       username: searchParams.get("username"),
     };
     const result = UsernameQuerySchema.safeParse(queryParam);
-    console.log(result); // remove
+    console.log("Here is the result: ", result); // remove
     if (!result.success) {
       const usernameError = result.error.format().username?._errors || [];
-      return NextResponse.json({
-        success: false,
-        message: "invalid Qory Parameters",
-      });
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            usernameError?.length > 0
+              ? usernameError.join(", ")
+              : "Invalid query parameters",
+        },
+        { status: 400 }
+      );
     }
 
     const { username } = result.data;
-    const existingVerifiedUser = UserModel.findOne({
+    const existingVerifiedUser = await UserModel.findOne({
       username,
-      isVarified: true,
+      isVerified: true,
     });
+
     if (existingVerifiedUser) {
       return NextResponse.json({
         success: false,
@@ -41,7 +48,7 @@ export async function GET(request) {
         success: true,
         message: "Username is Unique",
       },
-      { status: 400 }
+      { status: 200 }
     );
   } catch (error) {
     console.error("Error in checking username", error);
