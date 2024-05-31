@@ -1,11 +1,11 @@
-import { resend } from "@/lib/resend";
 import VerificationEmail from "../../emails/verificationEmail";
+import { resend } from "@/lib/resend";
 
 export async function sendVerificationEmail(email, username, verifyCode) {
   try {
     await resend.emails.send({
       from: "onboarding@resend.dev",
-      to: email,
+      to: "freefirewaleed@gmail.com",
       subject: "Mystry message | Verification Code",
       react: VerificationEmail({ username, otp: verifyCode }),
     });

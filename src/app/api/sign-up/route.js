@@ -2,12 +2,15 @@ import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/models/User";
 import bcrypt from "bcryptjs";
 import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
+// import { sendVerificationEmail } from "../send/route";
 import { NextResponse } from "next/server";
 
+dbConnect();
+
 export async function POST(request) {
-  await dbConnect();
   try {
-    const { username, email, password } = await request.json();
+    const reqBody = await request.json();
+    const { username, email, password } = await reqBody;
     const existingUserVerifiedByUsername = await UserModel.findOne({
       username,
       isVerified: true,
@@ -57,6 +60,7 @@ export async function POST(request) {
       username,
       verifyCode
     );
+    console.log(emailResponse);
     if (!emailResponse.success) {
       return NextResponse.json(
         { message: "Error in sending Email" },
