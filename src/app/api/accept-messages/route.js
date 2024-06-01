@@ -24,7 +24,7 @@ export async function POST(request) {
     const updatedUser = await UserModel.findByIdAndUpdate(
       userId,
       {
-        isAcceptingMessages: acceptMessages,
+        isAcceptingMessage: acceptMessages,
       },
       { new: true }
     );
@@ -43,14 +43,59 @@ export async function POST(request) {
       {
         success: true,
         message: "User status is updated",
+        updatedUser,
       },
-      { status: 201 }
+      { status: 200 }
     );
   } catch (error) {
     return NextResponse.json(
       {
         success: false,
         message: "failed to update user status to accept message",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request) {
+  try {
+    await dbConnect();
+    const session = await getServerSession(authOptions);
+    const user = session?.user;
+    if (!session || !session.user) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Not authenticated",
+        },
+        { status: 401 }
+      );
+    }
+    const userId = user._id;
+
+    const foundUser = UserModel.findById(userId);
+    if (!foundUser) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "User not found",
+        },
+        { status: 404 }
+      );
+    }
+    return NextResponse.json(
+      {
+        success: true,
+        isAcceptingMessage: foundUser.isAcceptingMessage,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Error in getting messages status",
       },
       { status: 500 }
     );
