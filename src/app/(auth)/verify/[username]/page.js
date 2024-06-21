@@ -22,14 +22,14 @@ function Verify() {
   });
   const router = useRouter();
   const params = useParams();
-
   const onSubmit = async (data) => {
     try {
-      await axios.post("/api/verify-code", {
+      const response = await axios.post("/api/verify-code", {
         username: params.username,
-        code: data.code,
+        verifyCode: data.code,
       });
-      router.replace("sign-in");
+      console.log(response.data.message);
+      router.replace("/sign-in");
     } catch (error) {
       console.log("Error in Verifying Users");
     }

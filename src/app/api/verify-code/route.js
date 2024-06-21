@@ -10,6 +10,7 @@ export async function POST(request) {
 
     const decodedUsername = decodeURIComponent(username); // NOt needed but for info if we are extracting from url (username)
     const user = await UserModel.findOne({ username: decodedUsername });
+    // console.log(user);
     if (!user) {
       return NextResponse.json(
         {
@@ -20,7 +21,9 @@ export async function POST(request) {
       );
     }
     const isCodeValid = user.verifyCode === verifyCode;
+    // console.log(isCodeValid);
     const isCodeNotExpired = new Date(user.verifyCodeExpiry) > new Date();
+    console.log(isCodeNotExpired);
     if (isCodeValid && isCodeNotExpired) {
       user.isVerified = true;
       await user.save();
