@@ -33,13 +33,32 @@ function Page() {
         setIsloading(true);
         setUsernameMessage("");
         try {
-          await axios.get(
+          const respose = await axios.get(
             `/api/check-username-unique?username=${deboundedUsername}`
           );
-        } catch (error) {}
+          setUsernameMessage(respose.data.message);
+        } catch (error) {
+          console.log("Error in Checking User");
+          setUsernameMessage("Error in checking username");
+        } finally {
+          setIsloading(false);
+        }
       }
     };
+    checkUsernameUnique();
   }, [deboundedUsername]);
+
+  const onSubmit = async (data) => {
+    setIsSubmiting(true);
+    try {
+      const respose = await axios.post("/api/sign-up", data);
+      router.refresh(`/verify/${username}`);
+    } catch (error) {
+      console.log("Error in singup");
+    } finally {
+      setIsSubmiting(false);
+    }
+  };
 
   return <div>page</div>;
 }
