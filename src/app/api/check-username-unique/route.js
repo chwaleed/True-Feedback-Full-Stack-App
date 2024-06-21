@@ -45,7 +45,7 @@ export async function GET(request) {
     if (existingVerifiedUser) {
       return NextResponse.json({
         success: false,
-        message: "user name already taken",
+        message: "User name already taken",
       });
     }
     return NextResponse.json(

@@ -8,7 +8,7 @@ export async function POST(request) {
     const reqBody = await request.json();
     const { verifyCode, username } = reqBody;
 
-    const decodedUsername = decodeURIComponent(username); // NOt needed but for info
+    const decodedUsername = decodeURIComponent(username); // NOt needed but for info if we are extracting from url (username)
     const user = await UserModel.findOne({ username: decodedUsername });
     if (!user) {
       return NextResponse.json(
