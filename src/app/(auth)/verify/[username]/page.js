@@ -2,8 +2,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
-import React from "react";
+import React, { useState } from "react";
 import { verifySchema } from "@/models/verifySchema";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 function Verify() {
+  const [message, setMessage] = useState("");
   const form = useForm({
     resolver: zodResolver(verifySchema),
   });
@@ -28,13 +28,14 @@ function Verify() {
         username: params.username,
         verifyCode: data.code,
       });
-      console.log(response.data.message);
+      setMessage(response.data.message);
+      // console.log(response.data.message);
       router.replace("/sign-in");
     } catch (error) {
-      console.log("Error in Verifying Users");
+      setMessage(error.response.data.message);
     }
   };
-
+  console.log(message);
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
@@ -53,6 +54,7 @@ function Verify() {
                 <FormItem>
                   <FormLabel>Verification Code</FormLabel>
                   <Input {...field} />
+                  <p className="text-sm text-black">{message}</p>
                   <FormMessage />
                 </FormItem>
               )}
