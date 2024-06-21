@@ -29,7 +29,6 @@ function Verify() {
         verifyCode: data.code,
       });
       setMessage(response.data.message);
-      // console.log(response.data.message);
       router.replace("/sign-in");
     } catch (error) {
       setMessage(error.response.data.message);
