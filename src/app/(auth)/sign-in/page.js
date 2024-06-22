@@ -14,8 +14,10 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "@/models/signInSchema";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 function SignIn() {
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -25,11 +27,23 @@ function SignIn() {
   });
 
   const onSubmit = async (data) => {
-    const response = await signIn("credentials", {
+    const result = await signIn("credentials", {
       redirect: false,
       identifier: data.identifier,
       password: data.password,
     });
+
+    if (result?.error) {
+      if (result.error === "CredentialsSignin") {
+        console.log("Login Failed Incorrect passowrd or email");
+      } else {
+        console.log("Error in SignIN");
+      }
+    }
+
+    if (result?.url) {
+      router.replace("/dashboard");
+    }
   };
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-800">
