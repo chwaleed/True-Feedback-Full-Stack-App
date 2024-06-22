@@ -15,23 +15,29 @@ export const authOptions = {
       },
       async authorize(credentials) {
         await dbConnect();
+
         try {
-          const user = UserModel.findOne({
+          const user = await UserModel.findOne({
             $or: [
               { email: credentials.identifier },
               { username: credentials.identifier },
             ],
           });
+          console.log(user);
           if (!user) {
             throw new Error("No user found with this email");
-          }
-          if (user.isVerified) {
-            throw new Error("User is not verified");
           }
           const isPasswordCorrect = await bcrypt.compare(
             credentials.password,
             user.password
           );
+          if (!isPasswordCorrect) {
+            throw new Error("Password is Incorrect");
+          }
+          if (!user.isVerified) {
+            throw new Error("User is not verified");
+          }
+
           if (isPasswordCorrect) {
             return user;
           } else {

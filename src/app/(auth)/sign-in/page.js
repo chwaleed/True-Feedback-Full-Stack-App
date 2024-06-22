@@ -1,8 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import Link from "next/link";
+
 import {
   FormField,
   FormItem,
@@ -17,6 +18,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 function SignIn() {
+  const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
   const form = useForm({
     resolver: zodResolver(signInSchema),
@@ -32,12 +34,12 @@ function SignIn() {
       identifier: data.identifier,
       password: data.password,
     });
+    console.log(result);
 
     if (result?.error) {
+      setErrorMsg(result.error);
       if (result.error === "CredentialsSignin") {
-        console.log("Login Failed Incorrect passowrd or email");
-      } else {
-        console.log("Error in SignIN");
+        setErrorMsg("Please Enter Correct Email/Password");
       }
     }
 
@@ -78,6 +80,7 @@ function SignIn() {
                 </FormItem>
               )}
             />
+            {errorMsg && <p className=" text-red-400 text-sm">{errorMsg}</p>}
             <Button className="w-full" type="submit">
               Sign In
             </Button>
