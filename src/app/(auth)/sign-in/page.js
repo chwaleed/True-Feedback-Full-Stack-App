@@ -34,8 +34,6 @@ function SignIn() {
       identifier: data.identifier,
       password: data.password,
     });
-    console.log(result);
-
     if (result?.error) {
       setErrorMsg(result.error);
       if (result.error === "CredentialsSignin") {
