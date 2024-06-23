@@ -2,7 +2,7 @@
 import { acceptMessageSchema } from "@/models/acceptMessageSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 
 function Dashboard() {
@@ -19,6 +19,39 @@ function Dashboard() {
   });
   const { register, watch, setValue } = form;
   const acceptMessages = watch("acceptMessages");
+  const fetchAcceptMessages = useCallback(
+    async () => {
+      setIsSwitchLoading(true);
+      try {
+        const response = await axios.get("/api/accept-messages");
+        setValue("acceptMessages", response.data.isAcceptingMessages);
+      } catch (error) {
+        console.log("Failed to fetch message settings");
+      } finally {
+        setIsSwitchLoading(false);
+      }
+    },
+    { setValue }
+  );
+  const fetchMessages = useCallback(
+    async (refresh = false) => {
+      setIsLoading(true);
+      setIsSwitchLoading(false);
+      try {
+        const response = await axios.get("/api/get-messages");
+        setMessages(response.data.messages || []);
+        if (refresh) {
+          console.log("Message Refresed");
+        }
+      } catch (error) {
+        console.log("Faliled to fetch Messages");
+      } finally {
+        setIsLoading(false);
+        setIsSwitchLoading(false);
+      }
+    },
+    [setIsLoading, setMessages]
+  );
   return <div>Dashboard</div>;
 }
 
