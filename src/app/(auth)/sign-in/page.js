@@ -40,9 +40,10 @@ function SignIn() {
         setErrorMsg("Please Enter Correct Email/Password");
       }
     }
-
-    if (result?.url) {
-      router.replace("/dashboard");
+    console.log(result.ok);
+    console.log(result);
+    if (result.ok) {
+      router.replace("/home");
     }
   };
   return (
