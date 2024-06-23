@@ -32,5 +32,20 @@ export async function DELETE(request, { params }) {
         { status: 404 }
       );
     }
-  } catch (error) {}
+    return NextResponse.json(
+      {
+        message: "Message Deleted Succesfuly",
+        success: true,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        message: "Error in Deleting Message",
+        success: false,
+      },
+      { status: 500 }
+    );
+  }
 }
