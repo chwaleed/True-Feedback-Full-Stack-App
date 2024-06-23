@@ -52,6 +52,18 @@ function Dashboard() {
     },
     [setIsLoading, setMessages]
   );
+
+  const handleSwitchChange = async () => {
+    try {
+      const response = await axios.post("/api/accept-messages", {
+        acceptMessages: !acceptMessages,
+      });
+      setValue("acceptMessages", !acceptMessages);
+      console.log(response.data.message);
+    } catch (error) {
+      console.log("Failed to update message settings");
+    }
+  };
   return <div>Dashboard</div>;
 }
 
