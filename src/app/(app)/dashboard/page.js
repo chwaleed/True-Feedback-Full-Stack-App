@@ -29,8 +29,7 @@ function Dashboard() {
     setIsSwitchLoading(true);
     try {
       const response = await axios.get("/api/accept-messages");
-      console.log(response.data);
-      setValue("acceptMessages", response.data.isAcceptingMessages);
+      setValue("acceptMessages", response.data.isAcceptingMessage);
     } catch (error) {
       console.log("Failed to fetch message settings");
     } finally {

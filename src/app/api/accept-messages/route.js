@@ -73,8 +73,7 @@ export async function GET(request) {
       );
     }
     const userId = user._id;
-
-    const foundUser = UserModel.findById(userId);
+    const foundUser = await UserModel.findById(userId);
     if (!foundUser) {
       return NextResponse.json(
         {
@@ -84,7 +83,6 @@ export async function GET(request) {
         { status: 404 }
       );
     }
-    console.log(foundUser.username);
     return NextResponse.json(
       {
         success: true,
