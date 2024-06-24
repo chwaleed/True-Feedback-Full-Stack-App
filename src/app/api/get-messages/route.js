@@ -9,6 +9,7 @@ export async function GET(request) {
   await dbConnect();
   const session = await getServerSession(authOptions);
   const user = session?.user;
+  console.log(user);
   if (!session || !session.user) {
     return NextResponse.json(
       {
@@ -18,7 +19,8 @@ export async function GET(request) {
       { status: 401 }
     );
   }
-  const userId = new mongoose.Types.ObjectId(user._id);
+  const userId = mongoose.Types.ObjectId.createFromHexString(user._id);
+  // const userId = new mongoose.Types.ObjectId(user._id);s
   try {
     const user = await UserModel.aggregate([
       { $match: { id: userId } },

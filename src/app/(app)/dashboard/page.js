@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { MessageCard } from "@/components/MessageCard";
 import { Switch } from "@/components/ui/switch";
 import { Loader2, RefreshCcw } from "lucide-react";
+import axios from "axios";
 
 function Dashboard() {
   const [messages, setMessages] = useState([]);
@@ -29,6 +30,7 @@ function Dashboard() {
       setIsSwitchLoading(true);
       try {
         const response = await axios.get("/api/accept-messages");
+        console.log(response);
         setValue("acceptMessages", response.data.isAcceptingMessages);
       } catch (error) {
         console.log("Failed to fetch message settings");
@@ -49,7 +51,7 @@ function Dashboard() {
           console.log("Message Refresed");
         }
       } catch (error) {
-        console.log("Faliled to fetch Messages");
+        console.log("Faliled  to fetch Messages");
       } finally {
         setIsLoading(false);
         setIsSwitchLoading(false);
