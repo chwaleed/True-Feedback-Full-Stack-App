@@ -2,7 +2,7 @@
 import { acceptMessageSchema } from "@/models/acceptMessageSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -25,21 +25,23 @@ function Dashboard() {
   });
   const { register, watch, setValue } = form;
   const acceptMessages = watch("acceptMessages");
-  const fetchAcceptMessages = useCallback(
-    async () => {
-      setIsSwitchLoading(true);
-      try {
-        const response = await axios.get("/api/accept-messages");
-        console.log(response);
-        setValue("acceptMessages", response.data.isAcceptingMessages);
-      } catch (error) {
-        console.log("Failed to fetch message settings");
-      } finally {
-        setIsSwitchLoading(false);
-      }
-    },
-    { setValue }
-  );
+  const fetchAcceptMessages = useCallback(async () => {
+    setIsSwitchLoading(true);
+    try {
+      const response = await axios.get("/api/accept-messages");
+      console.log(response.data);
+      setValue("acceptMessages", response.data.isAcceptingMessages);
+    } catch (error) {
+      console.log("Failed to fetch message settings");
+    } finally {
+      setIsSwitchLoading(false);
+    }
+  }, {});
+  useEffect(() => {
+    fetchMessages();
+    fetchAcceptMessages();
+  }, []);
+
   const fetchMessages = useCallback(
     async (refresh = false) => {
       setIsLoading(true);

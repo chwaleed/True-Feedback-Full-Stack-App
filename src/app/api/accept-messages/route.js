@@ -84,6 +84,7 @@ export async function GET(request) {
         { status: 404 }
       );
     }
+    console.log(foundUser.username);
     return NextResponse.json(
       {
         success: true,
