@@ -3,16 +3,9 @@ import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Form, FormControl } from "@/components/ui/form";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import messages from "@/suggestMessages.json";
+import { useCompletion } from "ai/react";
 import {
   FormField,
   FormItem,
@@ -26,6 +19,8 @@ import axios from "axios";
 import { messageSchema } from "@/models/messageSchema";
 
 function SendMessage() {
+  const [suggestMessages, setSuggestMessages] = useState(messages);
+  const [streamingText, setStreamingText] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const { user: username } = useParams();
   const form = useForm({
@@ -55,6 +50,42 @@ function SendMessage() {
       } else {
         setErrorMsg("Error in sending Message");
       }
+    }
+  };
+  // streaming text messagese
+  // const fetchMessages = async () => {
+  //   try {
+  //     const response = await axios.post("/api/suggest-messages");
+  //     const messages = response.data.message.split("||").map((message) => ({
+  //       message: message.trim(),
+  //     }));
+  //     setSuggestMessages(messages);
+  //   } catch (error) {
+  //     console.log("Error in suggesting Messages");
+  //   }
+  // };
+
+  const fetchMessages = async () => {
+    try {
+      const response = await axios.post("/api/suggest-messages");
+      let isFinal = false;
+
+      // Streaming loop
+      while (!isFinal) {
+        const data = await response.json(); // Get the chunk from the API
+        setStreamingText((prevText) => prevText + data.message);
+        isFinal = data.isFinal;
+      }
+
+      // Process the final message (split into an array)
+      if (isFinal) {
+        const messages = streamingText.split("||").map((message) => ({
+          message: message.trim(),
+        }));
+        setSuggestMessages(messages);
+      }
+    } catch (error) {
+      console.log("Error in suggesting Messages");
     }
   };
 
@@ -108,29 +139,22 @@ function SendMessage() {
         </form>
       </Form>
       <div className=" w-[50%] mx-auto mt-32">
-        <Button className="ml-4  scale-125">Suggest Messages</Button>
+        <Button onClick={() => fetchMessages()} className="ml-4  scale-125">
+          Suggest Messages
+        </Button>
         <p className="mt-8 font-semibold text-[1.1rem]">
           Click on any message below to select it
         </p>
-        <Table className="">
-          <h1 className="text-3xl font-bold mt-5 mb-5">Message</h1>
-
+        <h1 className="text-3xl font-bold mt-5 mb-5">Message</h1>
+        <Table>
           <TableBody className="   border-[3px] rounded-3xl">
-            <TableRow>
-              <TableCell className="text-center font-semibold text-[1.1rem]">
-                Type a lovely message for your love{" "}
-              </TableCell>
-            </TableRow>
-            <TableRow className="rounded-lg">
-              <TableCell className="text-center font-semibold text-[1.1rem]">
-                Type a lovely message for your love{" "}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="text-center font-semibold text-[1.1rem]">
-                Type a lovely message for your love{" "}
-              </TableCell>
-            </TableRow>
+            {suggestMessages.map((item, index) => (
+              <TableRow key={index}>
+                <TableCell className="text-center cursor-pointer font-semibold text-[1.1rem]">
+                  {item.message}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>

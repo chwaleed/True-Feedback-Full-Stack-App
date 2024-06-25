@@ -1,5 +1,11 @@
 [
   {
-    "message": ""
+    "message": "What’s a skill you’re currently trying to master?"
+  },
+  {
+    "message": "What's a skill you'd love to master?"
+  },
+  {
+    "message": "What’s one piece of advice you wish you’d been given when you were younger?"
   }
 ]
