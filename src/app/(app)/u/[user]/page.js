@@ -4,6 +4,16 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Form, FormControl } from "@/components/ui/form";
 import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import {
   FormField,
   FormItem,
   FormLabel,
@@ -102,6 +112,27 @@ function SendMessage() {
         <p className="mt-8 font-semibold text-[1.1rem]">
           Click on any message below to select it
         </p>
+        <Table className="">
+          <h1 className="text-3xl font-bold mt-5 mb-5">Message</h1>
+
+          <TableBody className="   border-[3px] rounded-3xl">
+            <TableRow>
+              <TableCell className="text-center font-semibold text-[1.1rem]">
+                Type a lovely message for your love{" "}
+              </TableCell>
+            </TableRow>
+            <TableRow className="rounded-lg">
+              <TableCell className="text-center font-semibold text-[1.1rem]">
+                Type a lovely message for your love{" "}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="text-center font-semibold text-[1.1rem]">
+                Type a lovely message for your love{" "}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
