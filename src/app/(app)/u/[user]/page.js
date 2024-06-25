@@ -1,11 +1,11 @@
 "use client";
 import { useParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Form, FormControl } from "@/components/ui/form";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import messages from "@/suggestMessages.json";
-import { useCompletion } from "ai/react";
+import { useTypewriter } from "react-simple-typewriter";
 import {
   FormField,
   FormItem,
@@ -20,7 +20,6 @@ import { messageSchema } from "@/models/messageSchema";
 
 function SendMessage() {
   const [suggestMessages, setSuggestMessages] = useState(messages);
-  const [streamingText, setStreamingText] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const { user: username } = useParams();
   const form = useForm({
@@ -52,42 +51,33 @@ function SendMessage() {
       }
     }
   };
-  // streaming text messagese
-  // const fetchMessages = async () => {
-  //   try {
-  //     const response = await axios.post("/api/suggest-messages");
-  //     const messages = response.data.message.split("||").map((message) => ({
-  //       message: message.trim(),
-  //     }));
-  //     setSuggestMessages(messages);
-  //   } catch (error) {
-  //     console.log("Error in suggesting Messages");
-  //   }
-  // };
 
+  // streaming response animtion
+  const textRef = useRef(null); // Ref to store the text element
+  const [typingWords, setTypingWords] = useState([]);
+  const { text, cursor } = useTypewriter({
+    words: typingWords, // Use state variable for words
+    loop: false,
+    delaySpeed: 200, // Adjust delay speed for animation
+    typeSpeed: 50, // Adjust typing speed for animation
+  });
+
+  // streaming text messagese
   const fetchMessages = async () => {
     try {
       const response = await axios.post("/api/suggest-messages");
-      let isFinal = false;
-
-      // Streaming loop
-      while (!isFinal) {
-        const data = await response.json(); // Get the chunk from the API
-        setStreamingText((prevText) => prevText + data.message);
-        isFinal = data.isFinal;
-      }
-
-      // Process the final message (split into an array)
-      if (isFinal) {
-        const messages = streamingText.split("||").map((message) => ({
-          message: message.trim(),
-        }));
-        setSuggestMessages(messages);
-      }
+      const messages = response.data.message.split("||").map((message) => ({
+        message: message.trim(),
+      }));
+      setSuggestMessages(messages);
+      setTypingWords(messages.map((item) => item.message));
     } catch (error) {
       console.log("Error in suggesting Messages");
     }
   };
+  useEffect(() => {
+    setTypingWords(suggestMessages.map((item) => item.message));
+  }, [suggestMessages]);
 
   return (
     <div>
@@ -150,13 +140,20 @@ function SendMessage() {
           <TableBody className="   border-[3px] rounded-3xl">
             {suggestMessages.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="text-center cursor-pointer font-semibold text-[1.1rem]">
+                <TableCell
+                  ref={textRef}
+                  className="text-center cursor-pointer font-semibold text-[1.1rem]"
+                >
                   {item.message}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        <div className="mt-5">
+          <span ref={textRef}>{text}</span>
+          {cursor}
+        </div>
       </div>
     </div>
   );
