@@ -31,22 +31,30 @@ function SendMessage() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-6 w-[50%] mt-8 mx-auto"
+          className="space-y-6 w-[50%]    mt-8 mx-auto"
         >
           <FormField
             name="message"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Send Anonymous Message to {user}</FormLabel>
-                <Textarea />
+                <FormLabel className="font-semibold text-[1.2rem]">
+                  Send Anonymous Message to @{user}
+                </FormLabel>
+                <Textarea
+                  placeholder="Write your anonymous message here"
+                  {...field}
+                  className=" placeholder:text-[1.1rem] text-[1.1rem] font-semibold"
+                />
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          <Button className="" type="submit">
-            Sign In
+          <Button
+            className=" scale-125 left-[50%] absolute translate-x-[-50%] "
+            type="submit"
+          >
+            Send It
           </Button>
         </form>
       </Form>
