@@ -15,8 +15,6 @@ import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { messageSchema } from "@/models/messageSchema";
 
-export const dynamic = "force-dynamic";
-
 function SendMessage() {
   const [errorMsg, setErrorMsg] = useState("");
   const { user: username } = useParams();
@@ -33,6 +31,11 @@ function SendMessage() {
         username,
         content: data.content,
       });
+      if (response.status === 200) {
+        setErrorMsg("Message Sent successfuly");
+      }
+      console.log(response);
+      form.reset();
       // console.log(response);
     } catch (error) {
       if (error.response.status === 403) {
@@ -75,7 +78,17 @@ function SendMessage() {
               </FormItem>
             )}
           />
-          {errorMsg && <p className=" text-red-400 text-sm">{errorMsg}</p>}
+          {errorMsg && (
+            <p
+              className={` ${
+                errorMsg === "Message Sent successfuly"
+                  ? "text-green-400"
+                  : "text-red-400"
+              } text-sm`}
+            >
+              {errorMsg}
+            </p>
+          )}
           <Button
             className="scale-125 absolute left-[50%] translate-x-[-50%]"
             type="submit"
@@ -84,6 +97,12 @@ function SendMessage() {
           </Button>
         </form>
       </Form>
+      <div className=" w-[50%] mx-auto mt-32">
+        <Button className="ml-4  scale-125">Suggest Messages</Button>
+        <p className="mt-8 font-semibold text-[1.1rem]">
+          Click on any message below to select it
+        </p>
+      </div>
     </div>
   );
 }
