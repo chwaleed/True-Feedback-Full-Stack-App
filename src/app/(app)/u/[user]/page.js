@@ -1,6 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Form, FormControl } from "@/components/ui/form";
 import {
@@ -18,6 +18,7 @@ import { messageSchema } from "@/models/messageSchema";
 export const dynamic = "force-dynamic";
 
 function SendMessage() {
+  const [errorMsg, setErrorMsg] = useState("");
   const { user: username } = useParams();
   const form = useForm({
     resolver: zodResolver(messageSchema),
@@ -26,14 +27,21 @@ function SendMessage() {
     },
   });
   const onSubmit = async (data) => {
+    setErrorMsg("");
     try {
       const response = await axios.post("/api/send-message", {
         username,
         content: data.content,
       });
-      console.log(response.data.message);
+      // console.log(response);
     } catch (error) {
-      console.log("Error in sending message");
+      if (error.response.status === 403) {
+        setErrorMsg("User is not Accepting Message");
+      } else if (error.response.status === 404) {
+        setErrorMsg("User not Found");
+      } else {
+        setErrorMsg("Error in sending Message");
+      }
     }
   };
 
@@ -67,7 +75,13 @@ function SendMessage() {
               </FormItem>
             )}
           />
-          <Button type="submit">Send It</Button>
+          {errorMsg && <p className=" text-red-400 text-sm">{errorMsg}</p>}
+          <Button
+            className="scale-125 absolute left-[50%] translate-x-[-50%]"
+            type="submit"
+          >
+            Send It
+          </Button>
         </form>
       </Form>
     </div>
