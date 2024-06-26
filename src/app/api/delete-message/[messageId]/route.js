@@ -10,11 +10,8 @@ export async function DELETE(request, { params }) {
   const session = await getServerSession(authOptions);
   const _user = session?.user;
   if (!session || !_user) {
-    return NextResponse.json(
-      {
-        message: "Not authenticated",
-        success: false,
-      },
+    return Response.json(
+      { success: false, message: "Not authenticated" },
       { status: 401 }
     );
   }
@@ -23,28 +20,22 @@ export async function DELETE(request, { params }) {
       { _id: _user._id },
       { $pull: { messages: { _id: messageId } } }
     );
+
     if (updateResult.modifiedCount === 0) {
-      return NextResponse.json(
-        {
-          message: "Message not found or already Deleted",
-          success: false,
-        },
+      return Response.json(
+        { message: "Message not found or already deleted", success: false },
         { status: 404 }
       );
     }
-    return NextResponse.json(
-      {
-        message: "Message Deleted Succesfuly",
-        success: true,
-      },
+
+    return Response.json(
+      { message: "Message deleted", success: true },
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json(
-      {
-        message: "Error in Deleting Message",
-        success: false,
-      },
+    console.error("Error deleting message:", error);
+    return Response.json(
+      { message: "Error deleting message", success: false },
       { status: 500 }
     );
   }

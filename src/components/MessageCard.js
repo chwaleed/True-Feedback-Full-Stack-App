@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -17,14 +16,26 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "./ui/button";
+import { useToast } from "./ui/use-toast";
 
 export function MessageCard({ message, onMessageDelete }) {
+  const { toast } = useToast();
+
   const handleDeleteConfirm = async () => {
+    console.log(message._id);
     try {
       const response = await axios.delete(`/api/delete-message/${message._id}`);
+      toast({
+        title: response.data.message,
+      });
       onMessageDelete(message._id);
     } catch (error) {
-      console.log("Error in Deleting Message");
+      console.log(error);
+      toast({
+        title: "Error",
+        description: "Failed to delete message",
+        variant: "destructive",
+      });
     }
   };
 
