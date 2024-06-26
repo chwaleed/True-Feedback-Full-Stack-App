@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 function Page() {
   const [username, setUsername] = useState("");
@@ -25,8 +26,7 @@ function Page() {
   const [isSubmiting, setIsSubmiting] = useState(false);
   const router = useRouter();
   const debounded = useDebounceCallback(setUsername, 300);
-  // const deboundedUsername = useDebounceValue(username, 300);
-
+  const { toast } = useToast();
   // Implementing Zod
   const form = useForm({
     resolver: zodResolver(signUpSchema),
@@ -48,7 +48,6 @@ function Page() {
           );
           setUsernameMessage(respose.data.message);
         } catch (error) {
-          console.log("Error in Checking User");
           setUsernameMessage("Error in checking username");
         } finally {
           setIsloading(false);
@@ -64,7 +63,11 @@ function Page() {
       const respose = await axios.post("/api/sign-up", data);
       router.replace(`/verify/${username}`);
     } catch (error) {
-      console.log("Error in singup");
+      toast({
+        variant: "destructive",
+        title: "Error in SignUp",
+        description: "There was a problem with your request.",
+      });
     } finally {
       setIsSubmiting(false);
     }

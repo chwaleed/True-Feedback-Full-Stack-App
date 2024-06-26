@@ -17,13 +17,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { messageSchema } from "@/models/messageSchema";
+import { useToast } from "@/components/ui/use-toast";
 
 function SendMessage() {
   const [suggestMessages, setSuggestMessages] = useState(messages);
   const [loading, setLoading] = useState(false);
   const [suggestLoading, setSuggestLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
   const { user: username } = useParams();
+  const { toast } = useToast();
   const form = useForm({
     resolver: zodResolver(messageSchema),
     defaultValues: {
@@ -33,23 +34,36 @@ function SendMessage() {
   const { register, setValue } = form;
   const onSubmit = async (data) => {
     setLoading(true);
-    setErrorMsg("");
     try {
       const response = await axios.post("/api/send-message", {
         username,
         content: data.content,
       });
       if (response.status === 200) {
-        setErrorMsg("Message Sent successfuly");
+        toast({
+          title: "Message send successfully",
+        });
       }
       form.reset();
     } catch (error) {
       if (error.response.status === 403) {
-        setErrorMsg("User is not Accepting Message");
+        toast({
+          variant: "destructive",
+          title: "User is not Accepting Message",
+          description: "User is not accepting messages any more.",
+        });
       } else if (error.response.status === 404) {
-        setErrorMsg("User not Found");
+        toast({
+          variant: "destructive",
+          title: "User not Found!",
+          description: "User does not exsits.",
+        });
       } else {
-        setErrorMsg("Error in sending Message");
+        toast({
+          variant: "destructive",
+          title: "Something Went Wrong",
+          description: "Error in sending Message",
+        });
       }
     } finally {
       setLoading(false);
@@ -66,7 +80,11 @@ function SendMessage() {
       }));
       setSuggestMessages(messages);
     } catch (error) {
-      console.log("Error in suggesting Messages");
+      toast({
+        variant: "destructive",
+        title: "Error suggesting Messages",
+        description: "There was a problem with your request.",
+      });
     } finally {
       setSuggestLoading(false);
     }
@@ -103,17 +121,6 @@ function SendMessage() {
               </FormItem>
             )}
           />
-          {errorMsg && (
-            <p
-              className={` ${
-                errorMsg === "Message Sent successfuly"
-                  ? "text-green-400"
-                  : "text-red-400"
-              } text-sm`}
-            >
-              {errorMsg}
-            </p>
-          )}
           <Button
             className="scale-125 absolute left-[50%] translate-x-[-50%]"
             type="submit"

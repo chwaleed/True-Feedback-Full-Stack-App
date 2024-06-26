@@ -34,7 +34,6 @@ function Verify() {
       setMessage(error.response.data.message);
     }
   };
-  console.log(message);
   return (
     <div className="flex justify-center bg-gray-800 items-center min-h-screen ">
       <div className="w-full max-md:w-[90%] max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
