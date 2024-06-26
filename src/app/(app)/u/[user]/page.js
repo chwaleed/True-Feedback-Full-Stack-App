@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { Form, FormControl } from "@/components/ui/form";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import messages from "@/suggestMessages.json";
-import { useTypewriter } from "react-simple-typewriter";
+import { useTypewriter, Cursor } from "react-simple-typewriter";
 import {
   FormField,
   FormItem,
@@ -38,9 +38,7 @@ function SendMessage() {
       if (response.status === 200) {
         setErrorMsg("Message Sent successfuly");
       }
-      console.log(response);
       form.reset();
-      // console.log(response);
     } catch (error) {
       if (error.response.status === 403) {
         setErrorMsg("User is not Accepting Message");
@@ -52,16 +50,6 @@ function SendMessage() {
     }
   };
 
-  // streaming response animtion
-  const textRef = useRef(null); // Ref to store the text element
-  const [typingWords, setTypingWords] = useState([]);
-  const { text, cursor } = useTypewriter({
-    words: typingWords, // Use state variable for words
-    loop: false,
-    delaySpeed: 200, // Adjust delay speed for animation
-    typeSpeed: 50, // Adjust typing speed for animation
-  });
-
   // streaming text messagese
   const fetchMessages = async () => {
     try {
@@ -70,14 +58,29 @@ function SendMessage() {
         message: message.trim(),
       }));
       setSuggestMessages(messages);
-      setTypingWords(messages.map((item) => item.message));
     } catch (error) {
       console.log("Error in suggesting Messages");
     }
   };
-  useEffect(() => {
-    setTypingWords(suggestMessages.map((item) => item.message));
-  }, [suggestMessages]);
+
+  const TypewriterHook = (message) => {
+    const msgArr = message.split(".");
+    // console.log(msgArr);
+    const [text] = useTypewriter({
+      words: msgArr,
+      loop: 1,
+      typeSpeed: 50,
+      deleteSpeed: 50,
+      delaySpeed: 1000,
+    });
+
+    return (
+      <span>
+        {text}
+        <Cursor />
+      </span>
+    );
+  };
 
   return (
     <div>
@@ -140,20 +143,13 @@ function SendMessage() {
           <TableBody className="   border-[3px] rounded-3xl">
             {suggestMessages.map((item, index) => (
               <TableRow key={index}>
-                <TableCell
-                  ref={textRef}
-                  className="text-center cursor-pointer font-semibold text-[1.1rem]"
-                >
-                  {item.message}
+                <TableCell className="text-center cursor-pointer font-semibold text-[1.1rem]">
+                  {TypewriterHook(item.message)}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-        <div className="mt-5">
-          <span ref={textRef}>{text}</span>
-          {cursor}
-        </div>
       </div>
     </div>
   );
