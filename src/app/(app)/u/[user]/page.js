@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { Form, FormControl } from "@/components/ui/form";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import messages from "@/suggestMessages.json";
-import { useTypewriter, Cursor } from "react-simple-typewriter";
+import { Loader2 } from "lucide-react";
 import {
   FormField,
   FormItem,
@@ -20,6 +20,8 @@ import { messageSchema } from "@/models/messageSchema";
 
 function SendMessage() {
   const [suggestMessages, setSuggestMessages] = useState(messages);
+  const [loading, setLoading] = useState(false);
+  const [suggestLoading, setSuggestLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const { user: username } = useParams();
   const form = useForm({
@@ -29,6 +31,7 @@ function SendMessage() {
     },
   });
   const onSubmit = async (data) => {
+    setLoading(true);
     setErrorMsg("");
     try {
       const response = await axios.post("/api/send-message", {
@@ -47,11 +50,14 @@ function SendMessage() {
       } else {
         setErrorMsg("Error in sending Message");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   // streaming text messagese
   const fetchMessages = async () => {
+    setSuggestLoading(true);
     try {
       const response = await axios.post("/api/suggest-messages");
       const messages = response.data.message.split("||").map((message) => ({
@@ -60,26 +66,9 @@ function SendMessage() {
       setSuggestMessages(messages);
     } catch (error) {
       console.log("Error in suggesting Messages");
+    } finally {
+      setSuggestLoading(false);
     }
-  };
-
-  const TypewriterHook = (message) => {
-    const msgArr = message.split(".");
-    // console.log(msgArr);
-    const [text] = useTypewriter({
-      words: msgArr,
-      loop: 1,
-      typeSpeed: 50,
-      deleteSpeed: 50,
-      delaySpeed: 1000,
-    });
-
-    return (
-      <span>
-        {text}
-        <Cursor />
-      </span>
-    );
   };
 
   return (
@@ -127,7 +116,7 @@ function SendMessage() {
             className="scale-125 absolute left-[50%] translate-x-[-50%]"
             type="submit"
           >
-            Send It
+            {loading ? <Loader2 className="animate-spin" /> : "Send It"}
           </Button>
         </form>
       </Form>
@@ -144,7 +133,11 @@ function SendMessage() {
             {suggestMessages.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="text-center cursor-pointer font-semibold text-[1.1rem]">
-                  {TypewriterHook(item.message)}
+                  {suggestLoading ? (
+                    <Loader2 className=" mx-auto animate-spin" />
+                  ) : (
+                    item.message
+                  )}
                 </TableCell>
               </TableRow>
             ))}
