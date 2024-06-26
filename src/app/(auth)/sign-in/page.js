@@ -22,10 +22,6 @@ function SignIn() {
   const router = useRouter();
   const form = useForm({
     resolver: zodResolver(signInSchema),
-    defaultValues: {
-      identifier: "",
-      password: "",
-    },
   });
 
   const onSubmit = async (data) => {

@@ -96,7 +96,7 @@ function SendMessage() {
                     {...register("content")}
                     placeholder="Write your anonymous message here"
                     {...field}
-                    className=" placeholder:text-[1.1rem] text-[1.1rem] font-semibold"
+                    className=" placeholder:text-[1.1rem] max-md:h-32 text-[1.1rem] font-semibold"
                   />
                 </FormControl>
                 <FormMessage />
@@ -122,8 +122,11 @@ function SendMessage() {
           </Button>
         </form>
       </Form>
-      <div className=" max-md:w-[90%]  w-[50%] mx-auto mt-32">
-        <Button onClick={() => fetchMessages()} className="ml-4   scale-125">
+      <div className=" max-md:w-[90%] mb-16  w-[50%] mx-auto mt-32">
+        <Button
+          onClick={() => fetchMessages()}
+          className="md:ml-4   md:scale-125"
+        >
           Suggest Messages
         </Button>
         <p className="mt-8 font-semibold text-[1.1rem]">
