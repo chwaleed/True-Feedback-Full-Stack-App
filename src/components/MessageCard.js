@@ -24,7 +24,6 @@ export function MessageCard({ message, onMessageDelete }) {
       const response = await axios.delete(`/api/delete-message/${message._id}`);
       onMessageDelete(message._id);
     } catch (error) {
-      const axiosError = error;
       console.log("Error in Deleting Message");
     }
   };
