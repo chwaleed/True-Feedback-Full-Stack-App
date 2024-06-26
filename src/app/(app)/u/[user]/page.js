@@ -30,6 +30,7 @@ function SendMessage() {
       content: "",
     },
   });
+  const { register, setValue } = form;
   const onSubmit = async (data) => {
     setLoading(true);
     setErrorMsg("");
@@ -92,6 +93,7 @@ function SendMessage() {
                 </FormLabel>
                 <FormControl>
                   <Textarea
+                    {...register("content")}
                     placeholder="Write your anonymous message here"
                     {...field}
                     className=" placeholder:text-[1.1rem] text-[1.1rem] font-semibold"
@@ -132,7 +134,14 @@ function SendMessage() {
           <TableBody className="   border-[3px] rounded-3xl">
             {suggestMessages.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="text-center cursor-pointer font-semibold text-[1.1rem]">
+                <TableCell
+                  onClick={() =>
+                    setValue("content", item.message, {
+                      shouldValidate: true,
+                    })
+                  }
+                  className="text-center cursor-pointer font-semibold text-[1.1rem]"
+                >
                   {suggestLoading ? (
                     <Loader2 className=" mx-auto animate-spin" />
                   ) : (
