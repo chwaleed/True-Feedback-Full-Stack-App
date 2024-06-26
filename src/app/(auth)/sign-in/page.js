@@ -16,28 +16,43 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "@/models/signInSchema";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 function SignIn() {
   const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
   const form = useForm({
     resolver: zodResolver(signInSchema),
   });
 
   const onSubmit = async (data) => {
-    const result = await signIn("credentials", {
-      redirect: false,
-      identifier: data.identifier,
-      password: data.password,
-    });
-    if (result?.error) {
-      setErrorMsg(result.error);
-      if (result.error === "CredentialsSignin") {
-        setErrorMsg("Please Enter Correct Email/Password");
+    setLoading(true);
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        identifier: data.identifier,
+        password: data.password,
+      });
+      if (result?.error) {
+        setErrorMsg(result.error);
+        if (result.error === "CredentialsSignin") {
+          setErrorMsg("Please Enter Correct Email/Password");
+        }
       }
-    }
-    if (result.ok) {
-      router.replace("/dashboard");
+      if (result.ok) {
+        setLoading(false);
+        router.replace("/dashboard");
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error in SignIn",
+      });
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -75,7 +90,7 @@ function SignIn() {
             />
             {errorMsg && <p className=" text-red-400 text-sm">{errorMsg}</p>}
             <Button className="w-full" type="submit">
-              Sign In
+              {loading ? <Loader2 className="animate-spin" /> : "Sign In"}
             </Button>
           </form>
         </Form>

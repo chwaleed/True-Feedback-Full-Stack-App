@@ -10,11 +10,13 @@ import { MessageCard } from "@/components/MessageCard";
 import { Switch } from "@/components/ui/switch";
 import { Loader2, RefreshCcw } from "lucide-react";
 import axios from "axios";
+import { useToast } from "@/components/ui/use-toast";
 
 function Dashboard() {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
+  const { toast } = useToast();
   // Delete Message Fuction
   const handleDeleteMessage = (messageId) => {
     setMessages(messages.filter((message) => message._id !== messageId));
@@ -31,7 +33,11 @@ function Dashboard() {
       const response = await axios.get("/api/accept-messages");
       setValue("acceptMessages", response.data.isAcceptingMessage);
     } catch (error) {
-      console.log("Failed to fetch message settings");
+      toast({
+        variant: "destructive",
+        title: "Something Went Wrong",
+        description: "Failed to fetch message settings",
+      });
     } finally {
       setIsSwitchLoading(false);
     }
@@ -49,10 +55,15 @@ function Dashboard() {
         const response = await axios.get("/api/get-messages");
         setMessages(response.data.messages || []);
         if (refresh) {
-          console.log("Message Refresed");
+          toast({
+            title: "Message Refresed",
+          });
         }
       } catch (error) {
-        console.log("Faliled  to fetch Messages");
+        toast({
+          variant: "destructive",
+          title: "Refreash Failed",
+        });
       } finally {
         setIsLoading(false);
         setIsSwitchLoading(false);
