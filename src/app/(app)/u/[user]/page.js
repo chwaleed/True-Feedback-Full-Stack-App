@@ -74,14 +74,14 @@ function SendMessage() {
 
   return (
     <div>
-      <h1 className="text-center text-5xl font-bold mt-16">
+      <h1 className="text-center max-md:text-3xl text-5xl font-bold mt-16">
         Public Profile Link
       </h1>
 
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-6 w-[50%] mt-8 mx-auto"
+          className="space-y-6 max-md:w-[85%] w-[50%] mt-8 mx-auto"
         >
           <FormField
             name="content"
@@ -122,8 +122,8 @@ function SendMessage() {
           </Button>
         </form>
       </Form>
-      <div className=" w-[50%] mx-auto mt-32">
-        <Button onClick={() => fetchMessages()} className="ml-4  scale-125">
+      <div className=" max-md:w-[90%]  w-[50%] mx-auto mt-32">
+        <Button onClick={() => fetchMessages()} className="ml-4   scale-125">
           Suggest Messages
         </Button>
         <p className="mt-8 font-semibold text-[1.1rem]">
