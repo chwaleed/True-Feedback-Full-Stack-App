@@ -20,8 +20,10 @@ export async function POST(request, { params }) {
   try {
     const updateResult = await UserModel.findByIdAndUpdate(
       { _id: _user._id },
-      { $pull: { messages: { _id: messageId } } }
+      { $pull: { messages: { _id: messageId } } },
+      { new: true }
     );
+    console.log(updateResult);
     if (updateResult.modifiedCount === 0) {
       return NextResponse.json(
         { message: "Message not found or already deleted", success: false },
