@@ -26,7 +26,18 @@ export async function GET(request) {
       { $sort: { "messages.createdAt": -1 } },
       { $group: { _id: "$_id", messages: { $push: "$messages" } } },
     ]);
+    // console.log();
+
     if (!user || user.length === 0) {
+      if (user[0] === undefined) {
+        return NextResponse.json(
+          {
+            success: true,
+            message: "No message found!",
+          },
+          { status: 200 }
+        );
+      }
       return NextResponse.json(
         {
           success: false,
@@ -35,6 +46,7 @@ export async function GET(request) {
         { status: 401 }
       );
     }
+
     return NextResponse.json(
       {
         success: true,
