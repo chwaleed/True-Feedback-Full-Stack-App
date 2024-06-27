@@ -24,7 +24,7 @@ export function MessageCard({ message, onMessageDelete }) {
   const handleDeleteConfirm = async () => {
     console.log(message._id);
     try {
-      const response = await axios.delete(`/api/delete-message/${message._id}`);
+      const response = await axios.post(`/api/delete-message/${message._id}`);
       toast({
         title: response.data.message,
       });
