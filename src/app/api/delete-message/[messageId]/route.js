@@ -18,7 +18,7 @@ export async function POST(request, { params }) {
   }
 
   try {
-    const updateResult = await UserModel.updateOne(
+    const updateResult = await UserModel.findByIdAndUpdate(
       { _id: _user._id },
       { $pull: { messages: { _id: messageId } } }
     );
