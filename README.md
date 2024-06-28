@@ -5,6 +5,11 @@ True Feedback is a platform allows users to create an account and generate a uni
 
 ## [Live Demo](https://randomfeedback.netlify.app/)
 
+### Demo Login Account
+Email: ali@gamil.com
+
+Password: 123456
+
 ### Home Page
 ![Screenshot 2024-06-27 171708](https://github.com/chwaleed/nextJs_Compelete-Web-Application/assets/150054046/a753222d-2370-471f-8695-b83949252094)
 ### Dashboard
