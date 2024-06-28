@@ -32,10 +32,6 @@ export async function GET(request) {
     }
 
     const { username } = result.data;
-    // console.log(username.toLocaleLowerCase());
-    // username = username.toLocaleLowerCase();
-    // console.log(username);
-
     const existingVerifiedUser = await UserModel.findOne({
       username,
       isVerified: true,

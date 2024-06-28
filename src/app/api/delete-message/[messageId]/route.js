@@ -5,7 +5,7 @@ import { authOptions } from "../../auth/[...nextauth]/options";
 import { NextResponse } from "next/server";
 
 export async function POST(request, { params }) {
-  const messageId = params.messageid;
+  const messageId = params.messageId;
   await dbConnect();
   const session = await getServerSession(authOptions);
   const _user = session?.user;
